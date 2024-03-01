@@ -1,0 +1,3 @@
+[submodule "src/main/resources/application-config"]
+	path = src/main/resources/application-config
+	url = https://github.com/GaBaljaintheroom/application-config.git
