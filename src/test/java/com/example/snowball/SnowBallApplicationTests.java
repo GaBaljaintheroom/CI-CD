@@ -8,6 +8,7 @@ class SnowBallApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println("test");
     }
 
 }
