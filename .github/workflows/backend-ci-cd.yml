@@ -27,10 +27,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v3.1.0
-      with: 
-         arguments: clean build
+    - name: grant execute permission for gradlew
+      run: chmod +x ./gradlew
+
+    - name: build gradle
+      run: ./gradlew clean build
+    
       
     - name: docker image build
       run: |
