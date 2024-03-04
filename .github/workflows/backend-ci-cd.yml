@@ -27,7 +27,7 @@ jobs:
 
       - name: Set CURRENT_DATE
         id: set_current_date
-        run: echo "::set-output name=current_date::$(date '+%Y-%m-%d-%H-%M-%S')"
+        run: echo "CURRENT_DATE=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
 
       - name: docker image build
         run: |
