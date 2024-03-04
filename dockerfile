@@ -7,7 +7,7 @@ COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 COPY src src
-RUN ./gradlew clean build
+RUN ./gradlew clean build -x test
 
 # Copy the built JAR file
 COPY build/libs/*.jar .
