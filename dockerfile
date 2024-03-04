@@ -2,7 +2,15 @@ FROM bellsoft/liberica-openjdk-alpine:17 as build
 WORKDIR /workspace/app
 
 # Copy Gradle wrapper and other necessary files
-COPY build/libs/ .
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
+RUN ./gradlew clean build
+
+# Copy the built JAR file
+COPY build/libs/*.jar .
 
 # Unpack the built application
 RUN mkdir -p target/extracted
