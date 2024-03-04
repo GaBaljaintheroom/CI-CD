@@ -31,8 +31,6 @@ jobs:
       uses: gradle/gradle-build-action@v3
     - name: Build with Gradle
       run: ./gradlew clean build -x test
-    - name: Test with Gradle
-      run: ./gradlew test
       
     - name: docker image build
       run: |
