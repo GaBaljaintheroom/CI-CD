@@ -54,6 +54,7 @@ jobs:
 
   run-docker-image-on-ec2:
     needs: build-docker-image
+    runs-on: ubuntu-latest
     steps:
       - name: docker deploy
         uses: appleboy/ssh-action@v1.0.3
