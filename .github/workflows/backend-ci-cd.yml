@@ -51,3 +51,19 @@ jobs:
 
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/springboot:${{ steps.set_current_date.outputs.current_date }}
+
+  run-docker-image-on-ec2:
+    needs: build-docker-image
+    runs-on: self-hosted
+    steps:
+      - name: docker deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/springboot
+            docker stop
+            docker run --name springboot --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/springboot
+            docker system prune -f
