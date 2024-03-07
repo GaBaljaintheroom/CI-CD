@@ -12,7 +12,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  build-docker-image:
+  spring-boot-ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +35,10 @@ jobs:
         with:
           files: '**/build/test-results/test/TEST-*.xml'
 
+  spring-boot-cd:
+    needs: spring-boot-ci
+    runs-on: ubuntu-latest
+    steps:
       - name: Set CURRENT_DATE
         id: set_current_date
         run: echo "version=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
@@ -56,11 +60,6 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/springboot:${{ steps.set_current_date.outputs.version }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/springboot:latest
 
-
-  run-docker-image-on-ec2:
-    needs: build-docker-image
-    runs-on: ubuntu-latest
-    steps:
       - name: docker deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
