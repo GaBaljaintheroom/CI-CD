@@ -12,7 +12,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  spring-boot-ci:
+  build-docker-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,31 +35,33 @@ jobs:
         with:
           files: '**/build/test-results/test/TEST-*.xml'
 
-  spring-boot-cd:
-    needs: spring-boot-ci
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set Version
+      - name: Set CURRENT_DATE
         id: set_current_date
         run: echo "version=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
 
-      - name: Docker Image Build
+      - name: docker image build
         run: |
+          VERSION=$(date +'%Y%m%d%H%M%S')
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/springboot:${{ steps.set_current_date.outputs.version }}  .
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/springboot:${{ steps.set_current_date.outputs.version }} ${{ secrets.DOCKERHUB_USERNAME }}/springboot:latest
 
-      - name: Docker Login
+      - name: docker login
         uses: docker/login-action@v3.0.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Docker Hub Push
+      - name: docker Hub push
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/springboot:${{ steps.set_current_date.outputs.version }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/springboot:latest
 
-      - name: Docker Deploy
+
+  run-docker-image-on-ec2:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: docker deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
